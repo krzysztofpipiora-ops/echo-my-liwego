@@ -40,13 +40,11 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        // Sprawdzamy czy atakujący to gracz
         if (!(event.getDamager() instanceof Player)) return;
         
         Player hunter = (Player) event.getDamager();
         Entity victim = event.getEntity();
 
-        // Sprawdzamy czy myśliwy trzyma właściwy przedmiot
         ItemStack handItem = hunter.getInventory().getItemInMainHand();
         if (handItem.getType() == Material.AIR || !handItem.hasItemMeta()) return;
         
@@ -82,12 +80,13 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
                     }
 
                     if (hunter.isOnline()) {
+                        // Zmieniono na CAMPFIRE_COSY_SMOKE, który działa w nowym API
                         hunter.spawnParticle(
-                                Particle.SMOKE, 
+                                Particle.CAMPFIRE_COSY_SMOKE, 
                                 victim.getLocation().add(0, 0.5, 0), 
-                                8, 
-                                0.2, 0.2, 0.2, 
-                                0.02
+                                4,             // Zmniejszona ilość, bo ten dym jest większy i ładniejszy
+                                0.1, 0.1, 0.1, 
+                                0.01
                         );
                     }
 
