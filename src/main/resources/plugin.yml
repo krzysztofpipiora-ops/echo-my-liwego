@@ -1,20 +1,11 @@
-name: Build Plugin
-
-on: [push, pull_request]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Build with Maven
-        run: mvn clean package
+name: EchoMysliwego
+version: '${project.version}'
+main: pl.twojnick.echomysliwego.EchoMysliwego
+api-version: '1.20'
+authors: [TwojNick]
+description: Plugin dodający mechanikę smugi dymu po uderzeniu przedmiotem Echo Myśliwego.
+commands:
+  echogive:
+    description: Daje przedmiot Echo Myśliwego.
+    permission: echomysliwego.admin
+    permission-message: Nie masz do tego uprawnień!
