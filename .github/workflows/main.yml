@@ -18,3 +18,10 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package
+
+      # Ten krok wraca w wersji v4 - teraz plik pojawi się do pobrania!
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EchoMysliwego-Plugin
+          path: target/*.jar
