@@ -1,0 +1,11 @@
+name: EchoMysliwego
+version: '${project.version}'
+main: pl.twojnick.echomysliwego.EchoMysliwego
+api-version: '1.20'
+authors: [TwojNick]
+description: Plugin dodający mechanikę smugi dymu po uderzeniu przedmiotem Echo Myśliwego.
+commands:
+  echogive:
+    description: Daje przedmiot Echo Myśliwego.
+    permission: echomysliwego.admin
+    permission-message: Nie masz do tego uprawnień!
