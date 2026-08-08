@@ -29,8 +29,10 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        this.getCommand("echogive").setExecutor(this);
-        getLogger().info("Echo Myśliwego zostało włączone pomyślnie!");
+        if (this.getCommand("echogive") != null) {
+            this.getCommand("echogive").setExecutor(this);
+        }
+        getLogger().info("Echo Myśliwego (1.21.1) zostało włączone pomyślnie!");
     }
 
     @Override
@@ -40,9 +42,8 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Player hunter)) return;
         
-        Player hunter = (Player) event.getDamager();
         Entity victim = event.getEntity();
 
         ItemStack handItem = hunter.getInventory().getItemInMainHand();
@@ -57,13 +58,13 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
             trackedTargets.put(victimUUID, hunter.getUniqueId());
 
             hunter.sendMessage(ChatColor.RED + "Zraniłeś cel! " + ChatColor.GOLD + "Echo Myśliwego " + ChatColor.GRAY + "zaczyna działać. Widzisz smugę dymu przez 1 minutę.");
-            if (victim instanceof Player) {
-                ((Player) victim).sendMessage(ChatColor.DARK_RED + "Jesteś śledzony! " + ChatColor.GRAY + "Zostawiasz za sobą smugę dymu...");
+            if (victim instanceof Player victimPlayer) {
+                victimPlayer.sendMessage(ChatColor.DARK_RED + "Jesteś śledzony! " + ChatColor.GRAY + "Zostawiasz za sobą smugę dymu...");
             }
 
             new BukkitRunnable() {
                 int elapsedTicks = 0;
-                final int maxTicks = 20 * 60; // 1 minuta
+                final int maxTicks = 20 * 60; // 1 minuta (1200 ticków)
 
                 @Override
                 public void run() {
@@ -72,19 +73,19 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
                         if (hunter.isOnline()) {
                             hunter.sendMessage(ChatColor.GRAY + "Efekt " + ChatColor.GOLD + "Echa Myśliwego " + ChatColor.GRAY + "na tym celu dobiegł końca.");
                         }
-                        if (victim instanceof Player && ((Player) victim).isOnline()) {
-                            ((Player) victim).sendMessage(ChatColor.GREEN + "Nie jesteś już śledzony.");
+                        if (victim instanceof Player victimPlayer && victimPlayer.isOnline()) {
+                            victimPlayer.sendMessage(ChatColor.GREEN + "Nie jesteś już śledzony.");
                         }
                         this.cancel();
                         return;
                     }
 
                     if (hunter.isOnline()) {
-                        // Zmieniono na CAMPFIRE_COSY_SMOKE, który działa w nowym API
+                        // Tworzenie cząsteczek dymu natywnie dla 1.21.1
                         hunter.spawnParticle(
                                 Particle.CAMPFIRE_COSY_SMOKE, 
                                 victim.getLocation().add(0, 0.5, 0), 
-                                4,             // Zmniejszona ilość, bo ten dym jest większy i ładniejszy
+                                3, 
                                 0.1, 0.1, 0.1, 
                                 0.01
                         );
@@ -98,12 +99,11 @@ public final class EchoMysliwego extends JavaPlugin implements Listener, Command
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Ta komenda może być użyta tylko przez gracza!");
             return true;
         }
 
-        Player player = (Player) sender;
         ItemStack echoItem = new ItemStack(Material.COMPASS);
         ItemMeta meta = echoItem.getItemMeta();
         if (meta != null) {
